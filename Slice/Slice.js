@@ -19,9 +19,19 @@
         }
 
         getInstance(module){
-            this.getClass(module).then(myClass=>{
-                return new myClass();
-            })
+            //modulo es la ruta del archivo js
+            if(this.classes.has(module)){
+                let m = this.classes.get(module);
+                return new m();
+            }else{
+                this.getClass(module).then(myClass=>{
+                    let x= new myClass();
+                    this.classes.set(x.constructor.name, myClass);
+                    console.log(`New Component`, x);
+                    return x;
+                })
+            }
+
             
         }
 }
