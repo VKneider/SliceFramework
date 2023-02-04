@@ -18,18 +18,19 @@
             
         }
 
-        getInstance(module){
+        async getInstance(module){
             //modulo es la ruta del archivo js
             if(this.classes.has(module)){
                 let m = this.classes.get(module);
+                console.log(`Instancia de modulo`, x);
                 return new m();
             }else{
-                this.getClass(module).then(myClass=>{
-                    let x= new myClass();
-                    this.classes.set(x.constructor.name, myClass);
-                    console.log(`New Component`, x);
-                    return x;
-                })
+                let myClass = await this.getClass(module);
+                let instance = await new myClass();
+                this.classes.set(instance.constructor.name, myClass);
+                console.log(`Instancia de mapa`, instance);
+                return await instance;
+                
             }
 
             
@@ -37,12 +38,12 @@
 }
 
 customElements.define("my-slice", Slice);
-window.slice= new Slice(); 
 
 
 
 async function load(){
     //se puede mejorar utilizando reflection
+    window.slice= new Slice(); 
     let x = await import("./js/Controller.js");
     window.slice.controller = new x.default();
 

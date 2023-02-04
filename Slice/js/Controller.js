@@ -14,8 +14,8 @@ export default class Controller {
             this.components.set(component.constructor.name + `-${id}`, component); id++;
         }
         else {
-            this.components.set(component.id, window.slice.getInstance());
-        }
+            this.components.set(component.id, component);
+     }
 
         
 

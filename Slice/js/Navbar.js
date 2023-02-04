@@ -4,7 +4,7 @@ export default class NavBar extends HTMLElement {
 
         super();
 
-
+        
         window.slice.controller.loadTemplate("./Slice/templates/Navbar.html").then(template => {
 
             this.template=template;
@@ -23,7 +23,7 @@ export default class NavBar extends HTMLElement {
         switch (name) {
             case 'titles':
                 this.titles = JSON.parse(newValue)
-                let titleContainers = this.template.shadowRoot.getElementById('title-container')
+                let titleContainers = this.shadowRoot.getElementById('title-container')
                 titleContainers.innerHTML = " "
                 this.titles.forEach(title => {
                     titleContainers.innerHTML += ` <li class="nav-menu-item "> <a href="#" id="script" class="averus nav-menu-link"> ${title} </a></li>`
