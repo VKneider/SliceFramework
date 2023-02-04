@@ -7,6 +7,11 @@
         this.styles.id="styles-slice"
         document.head.appendChild(this.styles);
         this.controller;
+        this.paths={
+            js:"./js/",
+            css:"./css/",
+            templates:"./templates/"
+        }
     }
         connectedCallback() {
             
@@ -19,16 +24,19 @@
         }
 
         async getInstance(module){
-            //modulo es la ruta del archivo js
-            if(this.classes.has(module)){
-                let m = this.classes.get(module);
-                console.log(`Instancia de modulo`, x);
+            //modulo es el nombre del modulo js
+            let name = module.split("/").pop().split(".")[0];
+            
+            console.log(name)
+            if(this.classes.has(name)){
+                let m = this.classes.get(name);
+                console.log(`Instancia de mapa`);
                 return new m();
             }else{
                 let myClass = await this.getClass(module);
                 let instance = await new myClass();
                 this.classes.set(instance.constructor.name, myClass);
-                console.log(`Instancia de mapa`, instance);
+                console.log(`Instancia de clase`, instance);
                 return await instance;
                 
             }
