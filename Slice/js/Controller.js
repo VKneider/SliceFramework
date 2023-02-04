@@ -1,64 +1,60 @@
 export default class Controller {
-    constructor () {
+    constructor() {
         this.components = new Map();
     }
 
-    toRegister (component) {
+    toRegister(component) {
 
-        if(this.components.has(component.id)){
+        if (this.components.has(component.id)) {
             component.remove();
-            return alert("ALERT: A Component with the same ID is already registered");  
+            return alert("ALERT: A Component with the same ID is already registered");
         }
-    
-        if(!window.slice.classes.has(component.constructor.name)){
             
-            window.slice.getClass(`./js/${component.constructor.name}.js`).then(module=>{
-                window.slice.classes.set(component.constructor.name, module)});
-            }
-
-        if(component.id=="")
-        {
-            this.components.set(component.constructor.name+`-${id}`,component);id++;
-        } 
+        if (component.id == "") {
+            this.components.set(component.constructor.name + `-${id}`, component); id++;
+        }
         else {
-            this.components.set(component.id, component);
-             }
+            this.components.set(component.id, window.slice.getInstance());
+        }
+
+        
+
     }
 
-    getInstance(id){
+    getInstance(id) {
         return this.components.get(id);
     }
 
-    loadTemplate (template) {
-        
+    loadTemplate(template) {
+
         return new Promise((resolve, reject) => {
-            const request =  fetch(template).then(response=>{
-                let html = response.text().then(html=>{
+            const request = fetch(template).then(response => {
+                let html = response.text().then(html => {
                     const templateElement = document.createElement('template');
                     templateElement.innerHTML = html;
                     resolve(templateElement);
                 })
             })
         });
-        
-    
+
+
 
     }
-    
-    loadCss(css){
+
+    loadCss(css) {
         let styles = document.getElementById("styles-slice");
         return new Promise((resolve, reject) => {
 
-        let request = fetch(css).then(response=>{
-            let css = response.text().then(css=>{
-                styles.innerHTML+=css;
+            let request = fetch(css).then(response => {
+                let css = response.text().then(css => {
+                    styles.innerHTML += css;
+                })
             })
-        })
-        resolve();
-    });
+            resolve();
+        });
     }
 }
 
-let id=0;
+let id = 0;
 
 
