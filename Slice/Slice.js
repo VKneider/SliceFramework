@@ -23,20 +23,24 @@
             
         }
 
-        async getInstance(module){
+        async getInstance(module, props){
             //modulo es el nombre del modulo js
             let name = module.split("/").pop().split(".")[0];
             
-            console.log(name)
+            console.log(props)
             if(this.classes.has(name)){
                 let m = this.classes.get(name);
                 console.log(`Instancia de mapa`);
-                return new m();
+                let instance = new m();
+                
+                if(props!=undefined){instance.props=props;}
+                return instance;
             }else{
                 let myClass = await this.getClass(module);
                 let instance = await new myClass();
                 this.classes.set(instance.constructor.name, myClass);
-                console.log(`Instancia de clase`, instance);
+                console.log(`Instancia de clase`);
+                if(props!=undefined){instance.props=props;}
                 return await instance;
                 
             }
@@ -64,3 +68,6 @@ load();
 
 
 
+function isEmpty(value) {
+    return value === undefined || value === null || value === '';
+  }
