@@ -6,4 +6,4 @@ Right now the main approach or solutions brought to the web dev world by this fr
 Custom Elements capable of making web development a breeze.
 
 # Note
-El que lee esta nota es mrk.
+Esta nota era obscena por lo tanto la eliminé
