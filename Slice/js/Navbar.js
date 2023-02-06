@@ -1,17 +1,12 @@
 export default class NavBar extends HTMLElement {
 
     constructor() {
-
         super();
-
-        
-        window.slice.controller.loadTemplate("./Slice/templates/Navbar.html").then(template => {
-
+        slice.controller.loadTemplate("./Slice/templates/Navbar.html").then(template => {
             this.template=template;
-            window.slice.controller.toRegister(this);
+            slice.controller.toRegister(this);
             this.attachShadow({ mode: 'open' });
             this.shadowRoot.appendChild(template.content.cloneNode(true));
-
         })
     }
 

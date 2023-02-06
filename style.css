@@ -1,3 +1,7 @@
+/*
+ * This CSS is only for the DIV created in index.js that was used to append content into the DOM, .grid is the class
+ * class of that DIV.
+*/
 *{
     margin:20px;
 }
