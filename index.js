@@ -38,14 +38,15 @@ let n = async function(){
     let div = document.createElement("div");
     
     div.classList.add("grid")
-    div.appendChild(card)
+    /*div.appendChild(card)
     div.appendChild(card2)
-    div.appendChild(card3)
-    document.body.appendChild(div)
+    div.appendChild(card3)*/
+    
     
     let SP = await slice.getInstance("SliderPro",{
         fotos:'["./Slice/img/image1.jpg", "./Slice/img/image2.jpg", "./Slice/img/image3.jpg", "./Slice/img/image4.jpg"]'
     });
+    
     let div2 = document.createElement('div');
     div2.appendChild(SP);
     document.body.appendChild(div2);
@@ -55,12 +56,30 @@ let n = async function(){
     
     let ImgCarousel = await slice.getInstance("img-carousel", {
         images:["./Slice/img/image1.jpg", "./Slice/img/image2.jpg", "./Slice/img/image3.jpg", "./Slice/img/image4.jpg"],
+        ratio:'9/16',
         jumpInterval: 2,
+        motion:"bw"
+    });
+
+    let ImgCarousel2 = await slice.getInstance("img-carousel", {
+        images:["./Slice/img/image1.jpg", "./Slice/img/image2.jpg", "./Slice/img/image3.jpg", "./Slice/img/image4.jpg"],
+        ratio:'1/1',
+        jumpInterval: 3,
+        motion:"fw"
+    });
+
+    let ImgCarousel3 = await slice.getInstance("img-carousel", {
+        images:["./Slice/img/image1.jpg", "./Slice/img/image2.jpg", "./Slice/img/image3.jpg", "./Slice/img/image4.jpg"],
+        ratio:'4/3',
         motion:"fw"
     });
     
-    
-    document.body.appendChild(ImgCarousel)
+    div.appendChild(ImgCarousel)
+    div.appendChild(ImgCarousel2)
+    div.appendChild(ImgCarousel3)
+
+    document.body.appendChild(div)
+   
 }
 
 n();
