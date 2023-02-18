@@ -5,82 +5,49 @@ export default class ImgCarousel extends HTMLElement {
     super();
     
     this.jumpInterval = 1500;
-    this._images = [];
+    this.images = [];
     this.slides = [];
     this.currentImage = 0;
     this.maxImage = 0;
 
-    
-    this.setupShadow();
-    window.slice.controller.loadTemplate("slice/templates/img-carousel.html");
-    window.slice.controller.toRegister(this);
+
+    slice.controller.loadTemplate("./Slice/templates/img-carousel.html").then(template=>{ 
+      
+      console.log(template)
+      this.shadow = this.attachShadow({ mode: "open" });
+      this.shadowRoot.appendChild(template.content.cloneNode(true));
+      const nextBtn = this.shadowRoot.getElementById('next')
+      const prevBtn = this.shadowRoot.getElementById('prev')
+      nextBtn.addEventListener("click", (e) => this.moveNext());
+      prevBtn.addEventListener("click", (e) => this.movePrev());
+      
+
+      if(this.props != undefined){
+        this.images=this.props.images;
+        this.maxImage = this.images.length - 1;
+        if(this.props.jumpInterval != undefined){ this.jumpInterval = this.props.jumpInterval * 1000;}
+        if(this.props.ratio != undefined){ this.changeStyles({aspectRatio: this.props.ratio});}
+        if(this.props.height != undefined){ this.changeStyles({height: this.props.height});}
+        if(this.props.motion != undefined){ if(this.props.motion=="fw"){this.autoMoveNext();}else{this.autoMovePrev();}
+
+        
+        this.create()
+
+        
+
+      }
+      slice.controller.toRegister(this);
+    }})
     
   }
   
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    let slider = this.shadow.querySelector(".slider");
-    switch (name) {
-      case "jump":
-        
-        this.jumpInterval = newValue * 1000;
-        break;
-
-      case "ratio":
-        slider.style.aspectRatio = newValue;
-        break;
-
-      case "motion":
-        switch (newValue.toLowerCase()) {
-          default:
-          case "fw":
-            this.autoMoveNext();
-            break;
-
-          case "bw":
-            this.autoMovePrev();
-            break;
-          
-          
-        }
-        break;
-
-      case "height":
-        slider.style.height = newValue;
-        break;
-    }
-  }
-
-  static get observedAttributes() {
-    return ["ratio", "jump", "motion", "height"];
-  }
-
   
   connectedCallback() {
     
-    const nextBtn = this.shadow.querySelector(".btn-next");
-    nextBtn.addEventListener("click", (e) => this.moveNext());
     
-    const prevBtn = this.shadow.querySelector(".btn-prev");
-    prevBtn.addEventListener("click", (e) => this.movePrev());
   }
   
-  set images(images) {
-    this._images = images;
-    this.maxImage = images.length - 1;
-    this.create();
-  }
-  
-  get images() {
-    return this._images;
-  }
-  
-  setupShadow() {
-    
-    this.shadow = this.attachShadow({ mode: "open" });
-    //const template = document.getElementById("img-carousel-template");
-    //this.shadow.appendChild(template.content.cloneNode(true));
-  }
+
 
   changeStyles(styles) {
     let slider = this.shadow.querySelector(".slider");
@@ -90,6 +57,7 @@ export default class ImgCarousel extends HTMLElement {
   }
 
   autoMovePrev() {
+    
     setInterval(
       function () {
         this.movePrev().bind(this);
@@ -133,6 +101,7 @@ export default class ImgCarousel extends HTMLElement {
   }
 
   create() {
+    
     this.images.forEach((img, idx) => {
       let slider = this.shadow.querySelector(".slider");
 

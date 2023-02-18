@@ -1,12 +1,11 @@
 export default class SliderPro extends HTMLElement{
   constructor(){
     super();
-    //var slice = document.getElementById('slice'); Esta linea no hace falta
     slice.controller.loadTemplate("./Slice/templates/SliderPro.html").then(template=>{ 
       
       this.attachShadow({ mode: 'open' });
       this.shadowRoot.appendChild(template.content.cloneNode(true));
-      this.props;
+      
 
       if(this.props != undefined){
         this.setAttribute('fotos', this.props['fotos']);
