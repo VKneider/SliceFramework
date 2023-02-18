@@ -25,15 +25,11 @@ export default class ImgCarousel extends HTMLElement {
       if(this.props != undefined){
         this.images=this.props.images;
         this.maxImage = this.images.length - 1;
-        if(this.props.jumpInterval != undefined){ this.jumpInterval = this.props.jumpInterval * 1000;}
+        this.create()
         if(this.props.ratio != undefined){ this.changeStyles({aspectRatio: this.props.ratio});}
+        if(this.props.jumpInterval != undefined){ this.jumpInterval = this.props.jumpInterval * 1000;}
         if(this.props.height != undefined){ this.changeStyles({height: this.props.height});}
         if(this.props.motion != undefined){ if(this.props.motion=="fw"){this.autoMoveNext();}else{this.autoMovePrev();}
-
-        
-        this.create()
-
-        
 
       }
       slice.controller.toRegister(this);
@@ -50,7 +46,7 @@ export default class ImgCarousel extends HTMLElement {
 
 
   changeStyles(styles) {
-    let slider = this.shadow.querySelector(".slider");
+    let slider = this.shadowRoot.getElementById("slider");
     Object.keys(styles).forEach(property => {
       slider.style[property] = styles[property];
     })
