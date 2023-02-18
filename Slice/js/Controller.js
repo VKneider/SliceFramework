@@ -1,8 +1,7 @@
-//Por ahora no estoy usando este archivo ya que me parece mucho mas conveniente tenerlo de manera nativa en Slice.js
-//esto es porque no lo se importar sin joder el codigo.
 export default class Controller {
     constructor() {
         this.components = new Map();
+        //Variable para probar el acceso a las instancias.
         this.testText = "Soy Instanciado Correctamente! (Controller)";
     }
 
@@ -18,9 +17,7 @@ export default class Controller {
         }
         else {
             this.components.set(component.id, component);
-     }
-
-        
+        }
 
     }
 
