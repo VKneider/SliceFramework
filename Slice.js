@@ -3,6 +3,7 @@ export default class Slice {
     constructor() {
         this.classes = new Map();
         this.templates = new Map();
+        this.logger;
         this.controller;
         this.paths = {
             components: "./Components",
@@ -10,8 +11,13 @@ export default class Slice {
     }
 
     async getClass(module) {
-        const { default: myClass } = await import(module);
-        return await myClass;
+        try {
+            const { default: myClass } = await import(module);
+            return await myClass;
+        } catch (error) {
+            this.logger.logError("Slice", `Error loading class ${module}`, error);
+        }
+        
     }
 
     async getInstance(componentName, props = {}) {
@@ -19,24 +25,41 @@ export default class Slice {
         const templatePath = `Slice/${this.paths.components}/${componentName}/${componentName}.html`;
 
         if (!this.templates.has(componentName)) {
-            const response = await fetch(templatePath);
-            const html = await response.text();
-            const template = document.createElement("template");
-            template.innerHTML = html;
-            template.id = componentName;
-            this.templates.set(componentName, template);
+            try {
+                const response = await fetch(templatePath);
+                const html = await response.text();
+                const template = document.createElement("template");
+                template.innerHTML = html;
+                template.id = componentName;
+                this.templates.set(componentName, template);
+                this.logger.logInfo("Slice", `Template ${componentName} loaded`)
+            } catch (error) {
+                console.log(error)
+                this.logger.logError("Slice", `Error loading template ${templatePath}`, error);
+            }
+            
         }
 
         if (this.classes.has(componentName)) {
             const ComponentClass = this.classes.get(componentName);
             const instance = new ComponentClass(props);
+            this.logger.logInfo("Slice", `Instance ${componentName} created`)
             return instance;
         } else {
-            const ComponentClass = await this.getClass(modulePath);
-            const instance = new ComponentClass(props);
-            this.classes.set(instance.constructor.name, ComponentClass);
-            return instance;
+            try {
+                const ComponentClass = await this.getClass(modulePath);
+                const instance = new ComponentClass(props);
+                this.classes.set(instance.constructor.name, ComponentClass);
+                this.logger.logInfo("Slice", `Class ${componentName} loaded`)
+                this.logger.logInfo("Slice", `Instance ${componentName} created`)
+                return instance;
+            } catch (error) {
+                this.logger.logError("Slice", `Error loading class ${modulePath}`, error);
+            }
+            
         }
+
+        
     }
 
     setPaths(paths) {
@@ -47,8 +70,11 @@ export default class Slice {
 
 async function load() {
     window.slice = new Slice();
-    let x = await import(`./Components/Controller/Controller.js`);
-    window.slice.controller = new x.default();
+    let logger = await import(`./Components/Logger/Logger.js`);
+    window.slice.logger = new logger.default();
+    let controller = await import(`./Components/Controller/Controller.js`);
+    window.slice.controller = new controller.default();
+    
 }
 
 load();
