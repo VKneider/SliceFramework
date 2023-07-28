@@ -1,13 +1,18 @@
+import Logger from "./Components/Logger/Logger.js";
+import Controller from "./Components/Controller/Controller.js";
+
 export default class Slice {
 
     constructor() {
         this.classes = new Map();
         this.templates = new Map();
-        this.logger;
-        this.controller;
+        this.logger = new Logger();
+        this.controller = new Controller();
         this.paths = {
             components: "./Components",
         };
+        this.styles = document.createElement("style");
+
     }
 
     async getClass(module) {
@@ -17,7 +22,6 @@ export default class Slice {
         } catch (error) {
             this.logger.logError("Slice", `Error loading class ${module}`, error);
         }
-        
     }
 
     async getInstance(componentName, props = {}) {
@@ -58,8 +62,6 @@ export default class Slice {
             }
             
         }
-
-        
     }
 
     setPaths(paths) {
@@ -68,14 +70,10 @@ export default class Slice {
 
 }
 
-async function load() {
+function init() {
     window.slice = new Slice();
-    let logger = await import(`./Components/Logger/Logger.js`);
-    window.slice.logger = new logger.default();
-    let controller = await import(`./Components/Controller/Controller.js`);
-    window.slice.controller = new controller.default();
-    
+    //document.head.appendChild(window.slice.styles);
 }
 
-load();
+init();
 
