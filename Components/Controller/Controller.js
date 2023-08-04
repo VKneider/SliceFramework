@@ -1,6 +1,8 @@
 export default class Controller {
     constructor() {
         this.components = new Map();
+        this.classes = new Map();
+        this.templates = new Map();
     }
 
     toRegister(component) {
@@ -25,7 +27,7 @@ export default class Controller {
     loadTemplate(component) {
 
         const className = component.constructor.name;
-        const template = slice.templates.get(className);
+        const template = slice.controller.templates.get(className);
         component.attachShadow({ mode: "open" });
         component.shadowRoot.appendChild(template.content.cloneNode(true));
         return component;

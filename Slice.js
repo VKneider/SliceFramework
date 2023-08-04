@@ -4,8 +4,6 @@ import Controller from "./Components/Controller/Controller.js";
 export default class Slice {
 
     constructor() {
-        this.classes = new Map();
-        this.templates = new Map();
         this.logger = new Logger();
         this.controller = new Controller();
         this.paths = {
@@ -28,14 +26,14 @@ export default class Slice {
         const modulePath = `${this.paths.components}/${componentName}/${componentName}.js`;
         const templatePath = `Slice/${this.paths.components}/${componentName}/${componentName}.html`;
 
-        if (!this.templates.has(componentName)) {
+        if (!this.controller.templates.has(componentName)) {
             try {
                 const response = await fetch(templatePath);
                 const html = await response.text();
                 const template = document.createElement("template");
                 template.innerHTML = html;
                 template.id = componentName;
-                this.templates.set(componentName, template);
+                this.controller.templates.set(componentName, template);
                 this.logger.logInfo("Slice", `Template ${componentName} loaded`)
             } catch (error) {
                 console.log(error)
@@ -44,8 +42,8 @@ export default class Slice {
             
         }
 
-        if (this.classes.has(componentName)) {
-            const ComponentClass = this.classes.get(componentName);
+        if (this.controller.classes.has(componentName)) {
+            const ComponentClass = this.controller.classes.get(componentName);
             const instance = new ComponentClass(props);
             this.logger.logInfo("Slice", `Instance ${componentName} created`)
             return instance;
@@ -53,7 +51,7 @@ export default class Slice {
             try {
                 const ComponentClass = await this.getClass(modulePath);
                 const instance = new ComponentClass(props);
-                this.classes.set(instance.constructor.name, ComponentClass);
+                this.controller.classes.set(instance.constructor.name, ComponentClass);
                 this.logger.logInfo("Slice", `Class ${componentName} loaded`)
                 this.logger.logInfo("Slice", `Instance ${componentName} created`)
                 return instance;
