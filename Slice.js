@@ -1,16 +1,17 @@
 import Logger from "./Components/Logger/Logger.js";
 import Controller from "./Components/Controller/Controller.js";
+import StylesManager from "./Components/StylesManager/StylesManager.js";
 
 export default class Slice {
 
     constructor() {
         this.logger = new Logger();
         this.controller = new Controller();
+        this.stylesManager = new StylesManager();
         this.paths = {
             components: "./Components",
+            themes:"./Themes"
         };
-        this.styles = document.createElement("style");
-
     }
 
     async getClass(module) {
@@ -25,6 +26,7 @@ export default class Slice {
     async getInstance(componentName, props = {}) {
         const modulePath = `${this.paths.components}/${componentName}/${componentName}.js`;
         const templatePath = `Slice/${this.paths.components}/${componentName}/${componentName}.html`;
+
 
         if (!this.controller.templates.has(componentName)) {
             try {
@@ -45,6 +47,7 @@ export default class Slice {
         if (this.controller.classes.has(componentName)) {
             const ComponentClass = this.controller.classes.get(componentName);
             const instance = new ComponentClass(props);
+            this.stylesManager.handleInstanceStyles(instance,props);
             this.logger.logInfo("Slice", `Instance ${componentName} created`)
             return instance;
         } else {
@@ -54,6 +57,7 @@ export default class Slice {
                 this.controller.classes.set(instance.constructor.name, ComponentClass);
                 this.logger.logInfo("Slice", `Class ${componentName} loaded`)
                 this.logger.logInfo("Slice", `Instance ${componentName} created`)
+                this.stylesManager.handleInstanceStyles(instance,props);
                 return instance;
             } catch (error) {
                 this.logger.logError("Slice", `Error loading class ${modulePath}`, error);
@@ -66,12 +70,17 @@ export default class Slice {
         this.paths = paths;
     }
 
+    setTheme(themeName) {
+        this.stylesManager.setTheme(themeName);
+    }
+
 }
 
 function init() {
     window.slice = new Slice();
-    //document.head.appendChild(window.slice.styles);
 }
 
 init();
+
+
 

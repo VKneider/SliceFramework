@@ -28,8 +28,10 @@ export default class Controller {
 
         const className = component.constructor.name;
         const template = slice.controller.templates.get(className);
-        component.attachShadow({ mode: "open" });
+        component.innerHTML=template.innerHTML;
+        /*component.attachShadow({ mode: "open" });
         component.shadowRoot.appendChild(template.content.cloneNode(true));
+        */
         return component;
     }
 }
