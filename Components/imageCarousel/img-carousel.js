@@ -1,62 +1,62 @@
-
-
 export default class ImgCarousel extends HTMLElement {
   constructor() {
     super();
-    
+
     this.jumpInterval = 1500;
     this.images = [];
     this.slides = [];
     this.currentImage = 0;
     this.maxImage = 0;
 
+    slice.controller
+      .loadTemplate("./Slice/templates/img-carousel.html")
+      .then((template) => {
+        this.shadow = this.attachShadow({ mode: "open" });
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        const nextBtn = this.shadowRoot.getElementById("next");
+        const prevBtn = this.shadowRoot.getElementById("prev");
+        nextBtn.addEventListener("click", (e) => this.moveNext());
+        prevBtn.addEventListener("click", (e) => this.movePrev());
+        const slider = this.shadowRoot.getElementById("slider");
 
-    slice.controller.loadTemplate("./Slice/templates/img-carousel.html").then(template=>{ 
-      
-     
-      this.shadow = this.attachShadow({ mode: "open" });
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-      const nextBtn = this.shadowRoot.getElementById('next')
-      const prevBtn = this.shadowRoot.getElementById('prev')
-      nextBtn.addEventListener("click", (e) => this.moveNext());
-      prevBtn.addEventListener("click", (e) => this.movePrev());
-      const slider = this.shadowRoot.getElementById('slider')
-
-    
-
-      if(this.props != undefined){
-        if(this.props.id!=undefined){this.id=this.props.id;}
-        this.images=this.props.images;
-        this.maxImage = this.images.length - 1;
-        this.create()
-        if(this.props.ratio != undefined){ this.changeStyles({"aspect-ratio": this.props.ratio});}
-        if(this.props.jumpInterval != undefined){ this.jumpInterval = this.props.jumpInterval * 1000;}
-        if(this.props.height != undefined){ this.changeStyles({height: this.props.height});}
-        if(this.props.motion != undefined){ if(this.props.motion=="fw"){this.autoMoveNext();}else{this.autoMovePrev();}
-
-      }
-      slice.controller.toRegister(this);
-    }})
-    
+        if (this.props != undefined) {
+          if (this.props.id != undefined) {
+            this.id = this.props.id;
+          }
+          this.images = this.props.images;
+          this.maxImage = this.images.length - 1;
+          this.create();
+          if (this.props.ratio != undefined) {
+            this.changeStyles({ "aspect-ratio": this.props.ratio });
+          }
+          if (this.props.jumpInterval != undefined) {
+            this.jumpInterval = this.props.jumpInterval * 1000;
+          }
+          if (this.props.height != undefined) {
+            this.changeStyles({ height: this.props.height });
+          }
+          if (this.props.motion != undefined) {
+            if (this.props.motion == "fw") {
+              this.autoMoveNext();
+            } else {
+              this.autoMovePrev();
+            }
+          }
+          slice.controller.registerComponent(this);
+        }
+      });
   }
-  
-  
-  connectedCallback() {
-    
-    
-  }
-  
 
+  connectedCallback() {}
 
   changeStyles(styles) {
     let slider = this.shadowRoot.getElementById("slider");
-    Object.keys(styles).forEach(property => {
+    Object.keys(styles).forEach((property) => {
       slider.style[property] = styles[property];
-    })
+    });
   }
 
   autoMovePrev() {
-    
     setInterval(
       function () {
         this.movePrev().bind(this);
@@ -75,7 +75,6 @@ export default class ImgCarousel extends HTMLElement {
   }
 
   moveNext() {
-
     if (this.currentImage === this.maxImage) {
       this.currentImage = 0;
     } else {
@@ -100,7 +99,6 @@ export default class ImgCarousel extends HTMLElement {
   }
 
   create() {
-    
     this.images.forEach((img, idx) => {
       let slider = this.shadow.querySelector(".slider");
 

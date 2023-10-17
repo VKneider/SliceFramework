@@ -1,4 +1,4 @@
- class Fetch {
+ export default class FetchManager {
     constructor(baseUrl, timeout) {
         if(baseUrl != undefined){
             this.url = baseUrl;
@@ -60,7 +60,3 @@
         
 }
 
-let mainFetch = new Fetch("http://localhost:3000", 10000);
-
-
-export default mainFetch;
