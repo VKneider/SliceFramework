@@ -1,23 +1,25 @@
 export default class Tester extends HTMLElement {
   
-  
   constructor(props) {
     super(); 
-    
+    slice.attachTemplate(this)
+
     for (const prop in props) {
-      this[prop] = props[prop];
+      this.setAttribute(prop, props[prop])
     }
      
+    
   }
   
   static observedAttributes = ['subject', 'description'];
 
    attributeChangedCallback(attributeName, oldValue, newValue){
-      if(Tester.observedAttributes.includes(attributeName)){
+     if(Tester.observedAttributes.includes(attributeName)){
 
-        switch(attributeName){
-          case 'subject':
-            this.querySelector(".slice_tester_subject").textContent=newValue;
+       switch(attributeName){
+         case 'subject':
+           this.querySelector(".slice_tester_subject").textContent=newValue;
+
             break;
 
           case 'description':

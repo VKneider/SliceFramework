@@ -12,67 +12,75 @@ export default class Slice {
             components: "./Components",
             themes:"./Themes"
         };
+
+        this.getClass = async function getClass(module) {
+            try {
+                const { default: myClass } = await import(module);
+                return await myClass;
+            } catch (error) {
+                this.logger.logError("Slice", `Error loading class ${module}`, error);
+            }
+        }
         
     }
 
-    async getClass(module) {
-        try {
-            const { default: myClass } = await import(module);
-            return await myClass;
-        } catch (error) {
-            this.logger.logError("Slice", `Error loading class ${module}`, error);
-        }
-    }
+    
 
-    async getInstance(componentName, props = {}) {
-
-        const nonVisualComponents = ["Logger", "Controller", "StylesManager", "CustomStylesManager", "ThemeManager", "FetchManager", "ToastProvider", "Translator"];
+    async build(componentName, props = {}, isVisual = true) {
 
         const modulePath = `${this.paths.components}/${componentName}/${componentName}.js`;
         const templatePath = `Slice/${this.paths.components}/${componentName}/${componentName}.html`;
 
 
-        if (!this.controller.templates.has(componentName) && !nonVisualComponents.includes(componentName) ) {
+        // Load template if not loaded
+        if (!this.controller.templates.has(componentName) && isVisual ) {
             try {
                 const response = await fetch(templatePath);
                 const html = await response.text();
                 const template = document.createElement("template");
                 template.innerHTML = html;
-                // verificar pq estaba esto -> emplate.id = componentName;
                 this.controller.templates.set(componentName, template);
                 this.logger.logInfo("Slice", `Template ${componentName} loaded`)
             } catch (error) {
                 console.log(error)
                 this.logger.logError("Slice", `Error loading template ${templatePath}`, error);
             }
-            
         }
 
-        if (this.controller.classes.has(componentName)) {
-            const ComponentClass = this.controller.classes.get(componentName);
-            const instance = new ComponentClass(props);
-            if(props.id) instance.id = props.id;
-            this.stylesManager.handleInstanceStyles(instance,props);
-            this.logger.logInfo("Slice", `Instance ${componentName} created`)
-            this.controller.registerComponent(instance);
-            return instance;
-        } else {
+
+        //Load class if not loaded
+        if (!this.controller.classes.has(componentName)) {
             try {
                 const ComponentClass = await this.getClass(modulePath);
-                const instance = new ComponentClass(props);
-                this.controller.classes.set(instance.constructor.name, ComponentClass);
+                this.controller.classes.set(componentName, ComponentClass);
                 this.logger.logInfo("Slice", `Class ${componentName} loaded`)
-                this.logger.logInfo("Slice", `Instance ${componentName} created`)
-                if(props.id) instance.id = props.id;
-                if(!nonVisualComponents.includes(componentName) ) this.controller.loadTemplate(instance)
-                this.stylesManager.handleInstanceStyles(instance,props);
-                this.controller.registerComponent(instance);
-                return instance;
             } catch (error) {
+                console.log(error)
                 this.logger.logError("Slice", `Error loading class ${modulePath}`, error);
             }
-            
         }
+
+
+        //Create instance
+        try {
+            const ComponentClass = this.controller.classes.get(componentName);
+            const componentInstance = new ComponentClass(props);
+
+            if(props.id) componentInstance.id = props.id;
+
+            //if(isVisual) this.controller.loadTemplate(componentInstance)
+
+            this.stylesManager.handleInstanceStyles(componentInstance,props);
+            this.logger.logInfo("Slice", `Instance ${componentName} created`)
+            this.controller.registerComponent(componentInstance);
+            return componentInstance;
+
+        } catch (error) {
+            console.log(error)
+            this.logger.logError("Slice", `Error creating instance ${componentName}`, error);
+        }
+
+        
     }
 
     setPaths(paths) {
@@ -83,6 +91,10 @@ export default class Slice {
         this.stylesManager.setTheme(themeName);
     }
 
+    attachTemplate(componentInstance) {
+        this.controller.loadTemplate(componentInstance);
+    }
+
 }
 
 function init() {
@@ -90,6 +102,3 @@ function init() {
 }
 
 init();
-
-
-
